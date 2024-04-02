@@ -11,7 +11,7 @@ TOKEN = "j74yR2sZDRjhRmtL9unz8ZPSJlCFtVnXKtA1Wx8Y"
 
 URL = "https://88panel.com/forgot-password/winbuzz.com"
 
-# WITHDRAW_URL = "https://88panel.com/withdraw-password-client/reset/863891/kUH4LkBdmJxbpBrHd3b0463a4d5cee4d1d7770e5653d8139"
+WITHDRAW_URL = "https://88panel.com/withdraw-password-client/reset/863891/kUH4LkBdmJxbpBrHd3b0463a4d5cee4d1d7770e5653d8139"
 
 # LOGIN_URL = "https://88panel.com/forgot-password/winbuzz.com"
 
