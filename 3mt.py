@@ -6,7 +6,7 @@ import config
 def send_request():
     global config
     url = "https://88panel.com/forgot_otp/winbuzz.com"
-    data = {"mobile": config.MOBILE, "_token": "OGcZZi42toVjDhacbWy7N2BBizJ6rd1hG2dNZgOO"}
+    data = {"mobile": config.MOBILE_NUMBER, "_token": "OGcZZi42toVjDhacbWy7N2BBizJ6rd1hG2dNZgOO"}
     response = requests.post(url, data=data)
     if response.status_code == 200:
         config.NO_OTP += 1

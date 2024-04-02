@@ -1,15 +1,19 @@
-MOBILE = "7829862342"
+# Configurations
+
+MOBILE_NUMBER = "8078644957"
 NO_OTP = 0
 TIME_S = 180
 
-
-# Configurations
-MOBILE_NUMBER = "8078644957"
 PASSWORD = "QWERTY@12345!@#$%"
 CNF_PASSWORD = "QWERTY@12345!@#$%"
-URL = "https://88panel.com/forgot-password/winbuzz.com"
-WITHDRAW_URL = "https://88panel.com/withdraw-password-client/reset/863891/kUH4LkBdmJxbpBrHd3b0463a4d5cee4d1d7770e5653d8139"
+
 TOKEN = "j74yR2sZDRjhRmtL9unz8ZPSJlCFtVnXKtA1Wx8Y"
+
+URL = "https://88panel.com/forgot-password/winbuzz.com"
+
+# WITHDRAW_URL = "https://88panel.com/withdraw-password-client/reset/863891/kUH4LkBdmJxbpBrHd3b0463a4d5cee4d1d7770e5653d8139"
+
+# LOGIN_URL = "https://88panel.com/forgot-password/winbuzz.com"
 
 
 R1 = 1000
