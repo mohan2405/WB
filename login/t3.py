@@ -1,5 +1,7 @@
 import requests
 import re
+import sys
+sys.path.append('/WB')
 import config
 
 def forgot_password(mobile, otp, password, cnf_password):
