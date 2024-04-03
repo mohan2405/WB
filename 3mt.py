@@ -18,7 +18,7 @@ def send_request():
 
 send_request()
 
-while flag != True:
-    while True:
-        time.sleep(config.TIME_S)
-        send_request()
+# while flag != True:
+while True:
+    time.sleep(config.TIME_S)
+    send_request()
