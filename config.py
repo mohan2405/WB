@@ -1,8 +1,8 @@
 # Configurations
 
-MOBILE_NUMBER = "7975580881"
+MOBILE_NUMBER = "8078644957"
 NO_OTP = 0
-TIME_S = 30
+TIME_S = 180
 
 FLAG = False
 
