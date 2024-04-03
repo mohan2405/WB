@@ -3,7 +3,6 @@ import requests
 import config
 
 
-flag = config.FLAG
 
 times = 0
 
@@ -21,7 +20,7 @@ def send_request():
 
 send_request()
 
-while flag != True:
+while config.FLAG != True:
     while True:
         time.sleep(config.TIME_S)
         send_request()
