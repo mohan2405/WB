@@ -1,0 +1,589 @@
+
+    var cr = [];
+    var pc = [];
+            cr = ["in"];
+    pc = ["in"];
+    
+    var input = document.querySelector("#mobile");
+    var phone_number = window.intlTelInput(input, {
+        onlyCountries: cr,
+        separateDialCode: true,
+        preferredCountries: pc,
+        hiddenInput: "full",
+        utilsScript: "//cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.3/js/utils.js",
+        // initialCountry: "auto",
+        geoIpLookup: function (callback) {
+            fetch("https://ipapi.co/json")
+                .then(function (res) {
+                    return res.json();
+                })
+                .then(function (data) {
+                    callback(data.country_code);
+                })
+                .catch(function () {
+                    callback("in");
+                });
+        }
+    });
+
+    // let timer = 5;
+    function receive(event) {
+        // alert(event.data);
+        console.log("Received Message : " + event.data);
+    }
+
+    let timerOn = true;
+
+    function timer(remaining) {
+        var m = Math.floor(remaining / 60);
+        var s = remaining % 60;
+
+        m = m < 10 ? '0' + m : m;
+        s = s < 10 ? '0' + s : s;
+        document.getElementById('timer').innerHTML = m + ':' + s;
+        // document.getElementById('timer').innerHTML = s;
+        remaining -= 1;
+
+        if (remaining >= 0 && timerOn) {
+            setTimeout(function () {
+                timer(remaining);
+            }, 1000);
+            return;
+        }
+
+        if (!timerOn) {
+            // Do validate stuff here
+            return;
+        }
+
+        // Do timeout stuff here
+        $('#resend_otp').show();
+        $('#timer-div').hide();
+    }
+
+    var accountType = "bank,wallet,wallet,wallet,wallet,wallet,wallet,wallet,wallet";
+    var accountTypeArr = accountType.split(',');
+    var type = "Bank Account,Gpay,Paytm,phonepe,UPI,IMPS,BKash,Nagad,Rocket";
+    var typeArr = type.split(',');
+
+    $(document).ready(function () {
+            });
+
+    $(document).on('change', '#accountType', function () {
+
+        if (accountTypeArr[$(this).val() - 1] == 'bank') {
+            $('.ifsc_code_div').show();
+            $('.number_label').text('A/C Number');
+            $('#accountNumberInput').attr('placeholder', 'Enter A/C Number');
+        }
+
+        if (accountTypeArr[$(this).val() - 1] == 'wallet') {
+            $('.ifsc_code_div').hide();
+            $('.number_label').text($('#accountType option:selected').text() + ' ID');
+            $('#accountNumberInput').attr('placeholder', 'Enter ' + $('#accountType option:selected').text() + ' ID');
+        }
+
+        console.log();
+    });
+
+    function withdrawModal(accountId) {
+        $('#bank-name').text($('#account-name-' + accountId).text());
+        $('#accountId').val(accountId);
+
+        $('#withdraw-modal').modal('show');
+    }
+
+    $(document).on('click', '#addAccountButton', function () {
+        if ($(this).data('modal-type') == "add_password") {
+            $('#withdraw-password-modal').modal('show');
+        } else {
+            $('#account-modal').modal('show');
+        }
+    });
+
+    function send_otp() {
+        country_code = phone_number.getSelectedCountryData().dialCode;
+        // full_number = mobile;
+        var full_number = phone_number.getNumber(intlTelInputUtils.numberFormat.E164);
+        // console.log(phone_number);
+        // return;
+        let mobile = $('#mobile').val();
+        // let mobile = full_number.replace('+', '');
+        // if (mobile.length !== 10) {
+        //     toastr.error('Invalid Mobile number !');
+        //     $('#mobile').focus();
+        //     return;
+        // }
+        $.ajax({
+            type: 'POST',
+            url: 'https://88panel.com/withdraw-password-send-otp/2231047/WkqC7F41aqsrJBHWf04de562a0cb3c306743470c671a17b8',
+            data: {
+                name: mobile,
+                username: mobile,
+                mobile: mobile,
+                "_token": "FbRfO1gmFxPudjTQNvNPn9IrJeNrj3RcZS0hvyU2",
+                country_code: country_code
+            },
+            success: function (response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    $('#send_otp').hide();
+                    // $('#mobile').prop('disabled', true);
+                    $('#otp_group').show();
+                    $('#resetWithdrawPasswordBtn').show();
+                    $('.password_div').show();
+                    $('#resend_otp').hide();
+                    $('#timer-div').show();
+                    timer(60);
+                } else {
+                    toastr.error(response.message);
+                }
+                if (response.otp) {
+                    // $('#otp-cheat').text(response.otp);
+                }
+            },
+            error: function (err) {
+
+            }
+        });
+    }
+
+    $(document).on('click', '.reset_withdraw_password',function () {
+        $('#reset-withdraw-password-modal').modal('show');
+    })
+
+    $(document).on('click', '#send_otp', function () {
+        send_otp();
+    });
+    $(document).on('click', '#resend_otp', function () {
+        send_otp();
+    });
+
+    $('button').tooltip({
+        trigger: 'click',
+        placement: 'bottom'
+    });
+
+    function setTooltip(btn, message) {
+        $(btn).tooltip('hide')
+            .attr('data-original-title', message)
+            .tooltip('show');
+    }
+
+    function hideTooltip(btn) {
+        setTimeout(function () {
+            $(btn).tooltip('hide');
+        }, 1000);
+    }
+
+    function print_date_time(date_time) {
+        document.write(moment.unix(date_time).utc().local().format('DD-MM-YYYY hh:mm:ss A'));
+    }
+
+    function date_time_string(date_time) {
+        // console.log(date_time);
+
+        return moment.unix(date_time).utc().local().format('DD-MM-YYYY hh:mm:ss A');
+    }
+
+    // Clipboard
+
+    var clipboard = new Clipboard('button');
+
+    clipboard.on('success', function (e) {
+        setTooltip(e.trigger, 'Copied!');
+        hideTooltip(e.trigger);
+    });
+
+    clipboard.on('error', function (e) {
+        setTooltip(e.trigger, 'Failed!');
+        hideTooltip(e.trigger);
+    });
+
+    $(document).on('click', '.withdrawBtn', function () {
+        var clientAccountId = $(this).data('id');
+        $('.withdraw-btn-' + clientAccountId).prop('disabled', true);
+        $('.withdraw-btn-' + clientAccountId).text('Loading..');
+                var withdrawUrl = "https://88panel.com/store-withdraw/param/param1/param2"
+                    withdrawUrl = withdrawUrl.replace('param', 'winbuzz.com');
+        withdrawUrl = withdrawUrl.replace('param1', '3472799');
+        withdrawUrl = withdrawUrl.replace('param2', 'WkqC7F41aqsrJBHWf04de562a0cb3c306743470c671a17b8');
+        if (parseInt($('#withdraw' + clientAccountId + 'Form input[name=amount]').val()) < 100) {
+            toastr.error("Min withdrawal amount is 100");
+            $('.withdraw-btn-' + clientAccountId).prop('disabled', false);
+            $('.withdraw-btn-' + clientAccountId).text('Withdraw');
+            return;
+        }
+        $.ajax({
+            method: 'POST',
+            url: withdrawUrl,
+            data: $('#withdraw' + clientAccountId + 'Form').serializeArray(),
+            success: function (result) {
+                if (result.status) {
+                    toastr.success(result.message);
+                    // swal(
+                    //     'Success',
+                    //     result.message,
+                    //     'success'
+                    // )
+                    $('#no_data_found').remove();
+                    $('#withdrawTableData').prepend('<tr>' +
+                        '<td>' + parseFloat(result.data.amount) + '</td>' +
+                        '<td>' + result.data.status_label + '</td>' +
+                        '<td>' + result.data.account_detail + '</td>' +
+                        '<td>' + date_time_string(result.data.created_at) + '</td>' +
+                        '<td>-</td>' +
+                        '</tr>');
+                    // const finalAmount = $('#user-title').data('balance') - result.data.amount;
+                    // $('#user-title').text($('#user-title').data('username') + '(' + finalAmount + ')');
+                    // $('#user-title').data('amount', finalAmount);
+
+                    // $('#withdraw-modal').modal('hide');
+                    $('#withdraw' + clientAccountId + 'Form').trigger("reset");
+                } else {
+                    toastr.error(result.message);
+                    // swal(
+                    //     'Error!',
+                    //     result.message,
+                    //     'error'
+                    // )
+                }
+
+                $('.withdraw-btn-' + clientAccountId).prop('disabled', false);
+                $('.withdraw-btn-' + clientAccountId).text('Withdraw');
+            },
+            error: function (err) {
+                toastr.success(err);
+
+                $('.withdraw-btn-' + clientAccountId).prop('disabled', false);
+                $('.withdraw-btn-' + clientAccountId).text('Withdraw');
+                // swal(
+                //     'Error!',
+                //     err,
+                //     'error'
+                // )
+            }
+        });
+    });
+
+    $('#withdrawAccountForm').validate({
+        rules: {
+            type: {
+                required: true
+            },
+            password: {
+                required: true
+            },
+            name: {
+                required: true,
+                minlength: 4
+            },
+            number: {
+                required: true,
+                minlength: 6,
+                number: true
+            },
+            ifsc_code: {
+                required: false,
+                minlength: 11,
+                maxlength: 11
+            },
+            amount: {
+                required: true,
+                min: 100,
+                number: true
+            }
+        },
+        messages: {
+            type: {
+                required: "Please select account type",
+            },
+            password: {
+                required: "Please enter password",
+            },
+            name: {
+                required: "Please enter your Account Name",
+                minlength: "Your Account Name must consist of at least 4 characters"
+            },
+            number: {
+                required: "Please enter your Account Number",
+                minlength: "Your Account Number must consist of at least 6 characters",
+            },
+            ifsc_code: {
+                required: "Please enter IFSC Code",
+                minlength: "IFSC Code length must be 11 character",
+                maxlength: "IFSC Code length must be 11 character",
+            },
+            amount: {
+                required: "Please Enter Valid Amount"
+            }
+        },
+        errorPlacement: function (error, element) {
+            error.insertAfter(element);
+        }
+    });
+
+    $('#addWithdrawPasswordForm').validate({
+        rules: {
+            password: {
+                required: true,
+                minlength: 6
+            },
+            password_confirmation: {
+                required: true,
+                minlength: 6,
+                equalTo: "#passwordInput"
+            }
+        },
+        messages: {
+            password: {
+                required: "Please enter password",
+                minlength: "Your Password must consist of at least 6 characters"
+            },
+            password_confirmation: {
+                required: "Please enter confirm password",
+                minlength: "Your Password must consist of at least 6 characters",
+                equalTo: "Password and Confirm Password must be same",
+            },
+        },
+        errorPlacement: function (error, element) {
+            error.insertAfter(element);
+        }
+    });
+
+    $(document).on('click', '#withdrawAccountBtn', function () {
+        var withdrawUrl = "https://88panel.com/store-account/param/param1"
+        withdrawUrl = withdrawUrl.replace('param', 'winbuzz.com');
+        withdrawUrl = withdrawUrl.replace('param1', '3472799');
+        
+        if (parseInt($('#withdrawAccountForm input[name=amount]').val()) < 100) {
+            toastr.error("Min withdrawal amount is 100");
+            return;
+        }
+        if ($('#withdrawAccountForm').valid()) {
+            $('#withdrawAccountBtn').prop('disabled', true);
+            $('#withdrawAccountBtn').text('Loading..');
+            $.ajax({
+                method: 'POST',
+                url: withdrawUrl,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: $('#withdrawAccountForm').serializeArray(),
+                success: function (result) {
+                    // console.log(result.data.length);
+                    if (result.status) {
+                        if (result.account_detail) {
+                            let deleteAccountUrl = "https://88panel.com/client-account/winbuzz.com/3472799/param/delete";
+                            deleteAccountUrl = deleteAccountUrl.replace('param', result.account_detail.id);
+                            var ifscCodeHtml = '';
+                            var accountNumberLabel = '';
+                            if (accountTypeArr[result.account_detail.type - 1] == 'bank') {
+                                accountNumberLabel = 'Account No';
+                                ifscCodeHtml = 'IFSC Code : ' + result.account_detail.ifsc_code +
+                                    '<button class="btn btn-sm btn-success" data-clipboard-text="' + result.account_detail.ifsc_code + '">' +
+                                    '<i class="fa-solid fa-copy"></i>' +
+                                    '</button> </br>';
+                            }
+                            if (accountTypeArr[result.account_detail.type - 1] == 'wallet') {
+                                accountNumberLabel = typeArr[result.account_detail.type - 1] + ' ID';
+                            }
+                            $('#account-list-div').prepend('' +
+                                '<div class="col-md-6" id="account-div-' + result.account_detail.id + '">' +
+                                '<div class="card">' +
+                                '<div class="card-body">' +
+                                '<h5 class="card-title" id="account-name-' + result.account_detail.id + '">' + result.account_detail.name + '</h5>' +
+                                '<div class="account-data">' +
+                                '<p class="card-text">' +
+                                accountNumberLabel + ' : ' + result.account_detail.number +
+                                '<button class="btn btn-sm btn-success" data-clipboard-text="' + result.account_detail.number + '">' +
+                                '<i class="fa-solid fa-copy"></i></button>' +
+                                '</br>' +
+                                ifscCodeHtml +
+                                '</p>' +
+                                '</div>' +
+                                '<form id="withdraw' + result.account_detail.id + 'Form" method="post" class="withdrawalForm" action="">' +
+                                '<input type="hidden" name="_token" value="FbRfO1gmFxPudjTQNvNPn9IrJeNrj3RcZS0hvyU2">' +
+                                '<input type="number" class="form-control" placeholder="Enter amount" name="amount" min="100">' +
+                                '<input type="hidden" id="accountId" name="account_id" value="' + result.account_detail.id + '">' +
+                                '<button type="button" data-id="' + result.account_detail.id + '" class="btn btn-info withdrawBtn withdraw-btn-' + result.account_detail.id + '">Withdraw' +
+                                '</button></form>' +
+                                '<button class="btn btn-danger delete-account-btn" data-id="' + result.account_detail.id + '"' +
+                                'data-url="' + deleteAccountUrl + '">' +
+                                '<i class="fa-solid fa-trash"></i></button>' +
+                                '</div>' +
+                                '</div>' +
+                                '</div>');
+                            // $('#no_data_found').remove();
+                            // var accountName = result.account_detail.name;
+                            // var accountNo = result.account_detail.number;
+                            // $('#withdrawTableData').prepend('<tr>' +
+                            //     '<td>' + parseFloat(result.data.amount) + '</td>' +
+                            //     '<td>' + result.data.status_label + '</td>' +
+                            //     '<td>' + accountName.substr(0, 6) + '-' + accountNo.substr(accountNo.length - 4) + '</td>' +
+                            //     '<td>' + date_time_string(result.data.created_at) + '</td>' +
+                            //     '<td>-</td>' +
+                            //     '</tr>')
+                            // const finalAmount = $('#user-title').data('balance') - result.data.amount;
+                            // $('#user-title').text($('#user-title').data('username') + '(' + finalAmount + ')');
+                            // $('#user-title').data('amount', finalAmount);
+                            toastr.success(result.message);
+                            // swal(
+                            //     'Success',
+                            //     result.message,
+                            //     'success'
+                            // )
+                            $('#account-modal').modal('hide');
+                            $('#withdrawAccountForm').trigger("reset");
+                        } else {
+                            toastr.error(result.message);
+                            // swal(
+                            //     'Error!',
+                            //     result.message,
+                            //     'error'
+                            // )
+                        }
+
+                        $('#withdrawAccountBtn').prop('disabled', false);
+                        $('#withdrawAccountBtn').text('Save');
+                    } else {
+                        toastr.error(result.message);
+
+                        $('#withdrawAccountBtn').prop('disabled', false);
+                        $('#withdrawAccountBtn').text('Save');
+                        // swal(
+                        //     'Error!',
+                        //     result.message,
+                        //     'error'
+                        // )
+                    }
+                },
+                error: function (err) {
+
+                    $('#withdrawAccountBtn').prop('disabled', false);
+                    $('#withdrawAccountBtn').text('Save');
+                }
+            });
+        }
+    });
+
+    $(document).on('click', '#withdrawPasswordBtn', function () {
+        var withdrawPasswordUrl = "https://88panel.com/withdraw-password/param/param1"
+        withdrawPasswordUrl = withdrawPasswordUrl.replace('param', '2231047');
+        withdrawPasswordUrl = withdrawPasswordUrl.replace('param1', 'WkqC7F41aqsrJBHWf04de562a0cb3c306743470c671a17b8');
+        if ($('#addWithdrawPasswordForm').valid()) {
+            $('#withdrawPasswordBtn').prop('disabled', true);
+            $('#withdrawPasswordBtn').text('Loading..');
+            $.ajax({
+                method: 'POST',
+                url: withdrawPasswordUrl,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: $('#addWithdrawPasswordForm').serializeArray(),
+                success: function (result) {
+                    // console.log(result.data.length);
+                    if (result.status) {
+                        toastr.success(result.message);
+                        $('#addAccountButton').data('modal-type', 'add_account');
+                        $('#withdrawPasswordBtn').prop('disabled', false);
+                        $('#withdrawPasswordBtn').text('Save');
+                        $('#withdraw-password-modal').modal('toggle');
+                        $('#account-modal').modal('show');
+                    } else {
+                        toastr.error(result.message);
+                        $('#withdrawPasswordBtn').prop('disabled', false);
+                        $('#withdrawPasswordBtn').text('Save');
+                    }
+                },
+                error: function (err) {
+                    $('#withdrawPasswordBtn').prop('disabled', false);
+                    $('#withdrawPasswordBtn').text('Save');
+                }
+            });
+        }
+    });
+
+    $(document).on('click', '#resetWithdrawPasswordBtn', function () {
+        var resetWithdrawPasswordUrl = "https://88panel.com/withdraw-password-client/reset/param/param1"
+        resetWithdrawPasswordUrl = resetWithdrawPasswordUrl.replace('param', '2231047');
+        resetWithdrawPasswordUrl = resetWithdrawPasswordUrl.replace('param1', 'WkqC7F41aqsrJBHWf04de562a0cb3c306743470c671a17b8');
+        if ($('#resetWithdrawPasswordForm').valid()) {
+            $('#resetWithdrawPasswordBtn').prop('disabled', true);
+            $('#resetWithdrawPasswordBtn').text('Loading..');
+            $.ajax({
+                method: 'POST',
+                url: resetWithdrawPasswordUrl,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: $('#resetWithdrawPasswordForm').serializeArray(),
+                success: function (result) {
+                    // console.log(result.data.length);
+                    if (result.status) {
+                        toastr.success(result.message);
+                        $('#reset-withdraw-password-modal').modal('toggle');
+                        $('#resetWithdrawPasswordBtn').prop('disabled', false);
+                        $('#resetWithdrawPasswordBtn').text('Save');
+                        $('#send_otp').show();
+                        // $('#mobile').prop('disabled', true);
+                        $('#otp_group').hide();
+                        $('#resetWithdrawPasswordBtn').show();
+                        $('.password_div').hide();
+                        $('#resend_otp').show();
+                        $('#timer-div').hide();
+                        $('#resetWithdrawPasswordForm')[0].reset();
+                    } else {
+                        toastr.error(result.message);
+                        $('#resetWithdrawPasswordBtn').prop('disabled', false);
+                        $('#resetWithdrawPasswordBtn').text('Save');
+                    }
+                },
+                error: function (err) {
+                    toastr.error('Something went wrong!');
+                    $('#resetWithdrawPasswordBtn').prop('disabled', false);
+                    $('#resetWithdrawPasswordBtn').text('Save');
+                }
+            });
+        }
+    });
+
+    function date_time_format(date_time) {
+        // console.log(date_time);
+        return moment.utc(date_time).local().format('DD/MM/YYYY hh:mm:ss A');
+    }
+
+    $(document).on('click', '.delete-account-btn', function () {
+        let deleteAccountLink = $(this).data('url');
+        let accountId = $(this).data('id');
+        swal({
+            title: 'Do you want to delete account?',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.value) {
+                $.ajax({
+                    method: 'GET',
+                    url: deleteAccountLink,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        'contentType': 'application/json',
+                    },
+                    success: function (result) {
+                        // console.log(result.data.length);
+                        if (result.status) {
+                            $('#account-div-' + accountId).remove();
+                            toastr.success(result.message);
+                        } else {
+                            toastr.error(result.message);
+                        }
+                    },
+                    error: function (err) {
+                        toastr.error(err);
+                    }
+                });
+            }
+        })
+    });
+
