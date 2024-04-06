@@ -2,11 +2,9 @@ import time
 import requests
 import config
 
-flag = config.FLAG
-
 def send_request():
     global config
-    url = "https://88panel.com/forgot_otp/winbuzz.com"
+    url = "https://8panel.com/forgot_otp/winbuzz.com"
     data = {"mobile": config.MOBILE_NUMBER, "_token": config.TOKEN}
     response = requests.post(url, data=data)
     if response.status_code == 200:
@@ -17,8 +15,8 @@ def send_request():
         send_request()
 
 send_request()
-
-# while flag != True:
 while True:
     time.sleep(config.TIME_S)
     send_request()
+    
+
